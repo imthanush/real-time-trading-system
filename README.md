@@ -47,29 +47,28 @@ Modules in `script.js`: `DataManager`, `IndicatorEngine`, `SignalEngine`, `Branc
 ## 4. Run on macOS
 
 ```bash
-cd /Users/thanush/Documents/COA
 open index.html
 ```
 
-Or double-click `index.html` in Finder.
+Run the command from the project directory, or double-click `index.html` in Finder.
 
 ## 5. Optional local server
 
 ```bash
-cd /Users/thanush/Documents/COA
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080`.
+Run the command from the project directory, then open `http://localhost:8080`.
 
 The app is meant to work **offline**. Charts load from `chart.umd.min.js` in this folder. If Chart.js is missing, cards and tables still work; canvases show a fallback message.
 
 ## 6. Automated tests
 
 ```bash
-cd /Users/thanush/Documents/COA
 python3 tests.py
 ```
+
+Run the command from the project directory.
 
 ---
 
