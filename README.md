@@ -4,7 +4,7 @@
 **Platform:** macOS, modern browsers, vanilla HTML/CSS/JavaScript  
 **Dependencies:** none to install; local Chart.js (`chart.umd.min.js`)
 
-This is an **educational simulation**, not a brokerage and not investment advice. Prices, volumes, and benchmark names are synthetic.
+This is an **educational simulation**, not a brokerage and not investment advice. Prices, volumes, and benchmark names are synthetic. The interactive dashboard is built with HTML, CSS, JavaScript, and the bundled local Chart.js library.
 
 ---
 
