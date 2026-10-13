@@ -8,7 +8,13 @@ __pycache__/
 venv/
 env/
 .pytest_cache/
+.cache/
 coverage/
 .coverage
+*.log
+*.tmp
+*.swp
+*.bak
+*~
 .idea/
 .vscode/
