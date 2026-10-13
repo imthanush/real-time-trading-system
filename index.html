@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRADECORE — Branch Prediction &amp; CPI Lab | IACSI203</title>
+  <meta name="description" content="Educational simulation of SMA trading rules, 1-bit branch prediction, and CPI analysis for Computer Organisation and Architecture (IACSI203)." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#mainContent">Skip to main content</a>
+
+<div class="terminal-layout" id="terminalLayout">
+  <button type="button" class="nav-backdrop" id="btnNavBackdrop" aria-label="Close navigation"></button>
+
+  <aside class="terminal-sidebar" id="terminalSidebar" aria-label="Terminal navigation">
+    <div class="sidebar-brand">
+      <div class="brand-logo-badge" aria-hidden="true">TC</div>
+      <div class="brand-text-block">
+        <span class="brand-title">TRADECORE</span>
+        <span class="brand-edition">IACSI203 Lab</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-title">Workspace</span>
+      <button type="button" class="nav-item active" data-view="overview" aria-current="page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>Overview</span>
+      </button>
+      <button type="button" class="nav-item" data-view="market-data">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Market Data</span>
+      </button>
+      <button type="button" class="nav-item" data-view="trading-signals">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Trading Signals</span>
+      </button>
+
+      <span class="nav-section-title">Architecture</span>
+      <button type="button" class="nav-item" data-view="branch-prediction">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+        <span>Branch Predictor</span>
+      </button>
+      <button type="button" class="nav-item" data-view="cpi-analytics">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>CPI Analytics</span>
+      </button>
+
+      <span class="nav-section-title">Lab notes</span>
+      <button type="button" class="nav-item" data-view="portfolio">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span>Signal Summary</span>
+      </button>
+      <button type="button" class="nav-item" data-view="backtesting">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Simulation Review</span>
+      </button>
+      <button type="button" class="nav-item" data-view="news">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+        <span>Lab Notes</span>
+      </button>
+      <button type="button" class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Assumptions</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="desk-id-badge">
+        <span>LOCAL SIMULATION</span>
+        <span class="desk-status-dot" title="Offline-capable demo"></span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="terminal-main">
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button type="button" class="mobile-nav-toggle" id="btnMobileNav" aria-controls="terminalSidebar" aria-expanded="false" aria-label="Open navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="search-box-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="search"
+            class="search-input"
+            id="symbolSearch"
+            placeholder="Load a simulated series (NIFTY 50, SENSEX, BANK NIFTY, USD/INR)"
+            autocomplete="off"
+            aria-label="Search simulated series"
+            aria-controls="searchResultsDropdown"
+          />
+          <div class="search-results-dropdown" id="searchResultsDropdown" role="listbox"></div>
+        </div>
+      </div>
+
+      <div class="top-bar-right">
+        <div class="status-chip" title="All prices and volumes are synthetic">
+          <span class="chip-dot"></span>
+          <span>SIMULATED</span>
+        </div>
+        <div class="status-chip" title="Browser JavaScript runtime, not hardware CPI">
+          <span class="chip-dot blue"></span>
+          <span id="latencyTopBadge">JS —</span>
+        </div>
+        <div class="alerts-wrap">
+          <button type="button" class="icon-btn" id="btnAlertsToggle" title="Simulation alerts" aria-label="Simulation alerts" aria-expanded="false" aria-controls="alertsPanel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <div class="alerts-panel" id="alertsPanel">
+            <p class="alerts-title">Simulation alerts</p>
+            <ul id="alertList"></ul>
+          </div>
+        </div>
+        <div class="desk-profile">
+          <div class="desk-avatar">COA</div>
+          <div class="desk-info">
+            <span class="desk-name">IACSI203 Desk</span>
+            <span class="desk-course">Educational lab</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="terminal-content" id="mainContent">
+      <section class="view-pane active" id="view-overview" aria-labelledby="viewOverviewTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1 id="viewOverviewTitle">Real-Time Trading System: Branch Prediction &amp; CPI</h1>
+            <p>Educational simulation of SMA decisions, a 1-bit last-outcome predictor, and modeled CPI — not a brokerage.</p>
+          </div>
+          <span class="sim-disclaimer-tag">Synthetic data · not investment advice</span>
+        </div>
+
+        <div class="ticker-strip">
+          <div class="ticker-card" data-symbol="NIFTY 50">
+            <div class="ticker-top"><span class="ticker-symbol">NIFTY 50</span><span class="ticker-sim-label">SIMULATED</span></div>
+            <div class="ticker-price">Click to load</div>
+            <div class="ticker-change">20-period lab series</div>
+          </div>
+          <div class="ticker-card" data-symbol="SENSEX">
+            <div class="ticker-top"><span class="ticker-symbol">SENSEX</span><span class="ticker-sim-label">SIMULATED</span></div>
+            <div class="ticker-price">Click to load</div>
+            <div class="ticker-change">20-period lab series</div>
+          </div>
+          <div class="ticker-card" data-symbol="BANK NIFTY">
+            <div class="ticker-top"><span class="ticker-symbol">BANK NIFTY</span><span class="ticker-sim-label">SIMULATED</span></div>
+            <div class="ticker-price">Click to load</div>
+            <div class="ticker-change">20-period lab series</div>
+          </div>
+          <div class="ticker-card" data-symbol="USD/INR">
+            <div class="ticker-top"><span class="ticker-symbol">USD / INR</span><span class="ticker-sim-label">SIMULATED</span></div>
+            <div class="ticker-price">Click to load</div>
+            <div class="ticker-change">20-period lab series</div>
+          </div>
+        </div>
+
+        <div class="action-controls-card">
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="customPrices">Stock prices (CSV, min 3)</label>
+              <input type="text" id="customPrices" placeholder="142, 145, 143, 148, 150…" aria-describedby="customPricesHint customPricesError" />
+              <p class="control-hint" id="customPricesHint">Required. Positive finite numbers only. Max 500 values.</p>
+              <p class="field-error" id="customPricesError" role="alert"></p>
+            </div>
+            <div class="control-group">
+              <label for="customVolumes">Volumes (CSV, optional)</label>
+              <input type="text" id="customVolumes" placeholder="2400, 2600, 2300…" aria-describedby="customVolumesHint customVolumesError" />
+              <p class="control-hint" id="customVolumesHint">Optional. Mismatched length is flagged; analysis still runs.</p>
+              <p class="field-error" id="customVolumesError" role="alert"></p>
+            </div>
+            <div class="control-group">
+              <label for="smaWindow">SMA window</label>
+              <select id="smaWindow" aria-describedby="smaWindowHint smaWindowError">
+                <option value="3">3-period SMA</option>
+                <option value="5" selected>5-period SMA</option>
+                <option value="7">7-period SMA</option>
+                <option value="10">10-period SMA</option>
+              </select>
+              <p class="control-hint" id="smaWindowHint">Uses the last W prices only. No future values.</p>
+              <p class="field-error" id="smaWindowError" role="alert"></p>
+            </div>
+            <div class="control-group">
+              <label for="holdTolerance">HOLD tolerance (% of SMA)</label>
+              <input type="number" id="holdTolerance" value="0.5" min="0" max="10" step="0.1" aria-describedby="holdToleranceHint holdToleranceError" />
+              <p class="control-hint" id="holdToleranceHint">Relative band: |Price − SMA| / SMA. Not an absolute dollar amount.</p>
+              <p class="field-error" id="holdToleranceError" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btnAnalyse">Analyse Custom Input</button>
+            <button type="button" class="btn btn-green" id="btnRunBP">Run Branch Simulation Over Dataset</button>
+            <button type="button" class="btn btn-neutral" id="btnLoadBuiltin">Load Built-in Dataset</button>
+            <button type="button" class="btn btn-neutral" id="btnGenNew">Generate New Dataset</button>
+            <button type="button" class="btn btn-danger" id="btnResetBP">Reset Branch Predictor</button>
+          </div>
+          <div class="alert" id="errorAlert" role="alert" aria-live="assertive"></div>
+        </div>
+
+        <div class="summary-cards">
+          <div class="metric-card blue"><span class="metric-label">Current price</span><span class="metric-value" id="cardCurrentPrice">—</span><span class="metric-sub">Last simulated close</span></div>
+          <div class="metric-card green"><span class="metric-label">Price change</span><span class="metric-value" id="cardPriceChange">—</span><span class="metric-sub">vs previous period</span></div>
+          <div class="metric-card yellow"><span class="metric-label">% change</span><span class="metric-value" id="cardPctChange">—</span><span class="metric-sub">vs previous period</span></div>
+          <div class="metric-card purple"><span class="metric-label">Moving average</span><span class="metric-value" id="cardSMA">—</span><span class="metric-sub">SMA (active window)</span></div>
+          <div class="metric-card teal"><span class="metric-label">Volume</span><span class="metric-value" id="cardVolume">—</span><span class="metric-sub">Simulated units</span></div>
+          <div class="metric-card gray"><span class="metric-label">Volume change</span><span class="metric-value" id="cardVolChange">—</span><span class="metric-sub">vs previous period</span></div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="card">
+            <div class="card-header-bar">
+              <div class="card-title">Price and SMA (line chart, simulated)</div>
+              <div class="timeframe-group" role="group" aria-label="Chart period">
+                <button type="button" class="tf-btn" data-tf="5">5P</button>
+                <button type="button" class="tf-btn" data-tf="10">10P</button>
+                <button type="button" class="tf-btn" data-tf="15">15P</button>
+                <button type="button" class="tf-btn active" data-tf="all">ALL</button>
+              </div>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="priceChart" role="img" aria-label="Simulated price history and SMA line chart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-bar">
+              <div class="card-title">Trading signal</div>
+              <span class="ticker-sim-label">RULE-BASED</span>
+            </div>
+            <div class="signal-panel-body">
+              <div class="signal-hero-badge-wrap">
+                <div class="signal-badge" id="signalBadge">—</div>
+                <span class="control-hint">Educational output, not a trade recommendation</span>
+              </div>
+              <div class="signal-reason-box" id="signalReason">Awaiting market data analysis…</div>
+              <div class="signal-meta-rows">
+                <div class="meta-row"><span class="meta-key">Rule</span><span class="meta-val">Price vs SMA ± HOLD %</span></div>
+                <div class="meta-row"><span class="meta-key">Branch proxy</span><span class="meta-val">BUY→T · SELL/HOLD→N</span></div>
+                <div class="meta-row"><span class="meta-key">Dataset</span><span class="meta-val" id="datasetLabel">—</span></div>
+                <div class="meta-row"><span class="meta-key">Advice?</span><span class="meta-val">None — simulation only</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="co-arch-grid">
+          <div class="card">
+            <div class="card-header-bar">
+              <div class="card-title">1-bit last-outcome predictor</div>
+              <span class="ticker-sim-label">WARM-UP ON STEP 1</span>
+            </div>
+            <p class="panel-note">
+              <strong>Proxy mapping:</strong> BUY → T (taken); SELL/HOLD → N (not taken).
+              Step 1 initialises the predictor and is not counted. Later steps predict the previous actual outcome.
+              This does not forecast stock prices.
+            </p>
+            <div class="bp-metrics-grid">
+              <div class="bp-stat-box"><span class="bp-stat-key">Evaluated</span><span class="bp-stat-val info" id="bpTotal">0</span></div>
+              <div class="bp-stat-box"><span class="bp-stat-key">Hits</span><span class="bp-stat-val good" id="bpHits">0</span></div>
+              <div class="bp-stat-box"><span class="bp-stat-key">Misses</span><span class="bp-stat-val danger" id="bpMisses">0</span></div>
+              <div class="bp-stat-box"><span class="bp-stat-key">Accuracy</span><span class="bp-stat-val" id="bpAccuracy">N/A — awaiting predictions</span></div>
+            </div>
+            <div class="bp-table-wrapper">
+              <table class="bp-table">
+                <caption class="sr-only">Branch prediction history</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Step</th>
+                    <th scope="col">Signal</th>
+                    <th scope="col">Actual</th>
+                    <th scope="col">Predicted</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody id="bpTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-bar">
+              <div class="card-title">CPI and cycle model</div>
+              <span class="ticker-sim-label">1,000 INSTR.</span>
+            </div>
+            <p class="panel-note">
+              Baseline and 90% reference use the textbook rate formula.
+              Measured CPI uses actual miss count: 1 + (misses × 3) / 1000.
+              Browser timing is separate and is not hardware CPI.
+            </p>
+            <div class="cpi-comparison-strip">
+              <div class="cpi-block">
+                <h2>No-prediction baseline</h2>
+                <div class="cpi-row"><span class="key">CPI</span><span class="val danger" id="cpiNoPred">—</span></div>
+                <div class="cpi-row"><span class="key">Cycles (1k)</span><span class="val danger" id="cycNoPred">—</span></div>
+                <div class="cpi-row"><span class="key">Mispred. rate</span><span class="val">100%</span></div>
+              </div>
+              <div class="cpi-block">
+                <h2>90% reference</h2>
+                <div class="cpi-row"><span class="key">CPI</span><span class="val warn" id="cpiRef">—</span></div>
+                <div class="cpi-row"><span class="key">Cycles (1k)</span><span class="val warn" id="cycRef">—</span></div>
+                <div class="cpi-row"><span class="key">Saved vs base</span><span class="val" id="cycRefSaved">—</span></div>
+                <div class="cpi-row"><span class="key">Speedup</span><span class="val" id="refSpeedup">—</span></div>
+              </div>
+              <div class="cpi-block">
+                <h2>Measured predictor</h2>
+                <div class="cpi-row"><span class="key">CPI</span><span class="val good" id="cpiMeasured">N/A — awaiting predictions</span></div>
+                <div class="cpi-row"><span class="key">Cycles (1k)</span><span class="val good" id="cycMeasured">N/A — awaiting predictions</span></div>
+                <div class="cpi-row"><span class="key">Saved vs base</span><span class="val info" id="cycSaved">N/A — awaiting predictions</span></div>
+                <div class="cpi-row"><span class="key">Speedup</span><span class="val" id="measSpeedup">N/A — awaiting predictions</span></div>
+              </div>
+            </div>
+            <div class="chart-canvas-wrapper chart-canvas-wrapper--short">
+              <canvas id="cpiChart" role="img" aria-label="CPI comparison bar chart"></canvas>
+            </div>
+            <div class="formula-box" id="formulaReference">
+              Reference CPI = 1 + 0.25 × (1 − accuracy) × 3<br />
+              Measured CPI = 1 + (mispredictions × 3) / 1000<br />
+              <span class="comment">Baseline 1.750 → 1,750 cycles · 90% ref 1.075 → 1,075 cycles · savings 675 (38.57%) · speedup 1.628×</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-controls-card ribbon">
+          <div class="ribbon-row">
+            <div><strong>Active parameters:</strong> Points <span id="dataPoints" class="tabular-num">—</span> · SMA <span id="smaWindowDisp">5</span> · Tolerance <span id="toleranceDisp">0.50%</span></div>
+            <div><strong>Browser JS time:</strong> <span id="latencyMs" class="tabular-num accent">— ms</span> via performance.now() — not CPU cycles</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-market-data" aria-labelledby="viewMarketDataTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewMarketDataTitle">Market data feed</h2>
+            <p>Inspect the active simulated price/volume sequence used by indicators and the predictor.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">Active dataset</h3>
+          <div class="table-scroll">
+            <table class="standard-table">
+              <thead>
+                <tr><th>Period</th><th>Price</th><th>SMA</th><th>Volume</th><th>Signal</th></tr>
+              </thead>
+              <tbody id="marketDataTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-trading-signals" aria-labelledby="viewTradingSignalsTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewTradingSignalsTitle">Trading signal rules</h2>
+            <p>Deterministic SMA rule. Tolerance is a percentage of SMA, not a dollar amount.</p>
+          </div>
+        </div>
+        <div class="terminal-two-col">
+          <div class="card">
+            <h3 class="card-title">Decision rule</h3>
+            <div class="formula-box formula-box--flush">
+BUY:  Price &gt; SMA × (1 + tolerance)<br />
+SELL: Price &lt; SMA × (1 − tolerance)<br />
+HOLD: |Price − SMA| / SMA ≤ tolerance, or SMA unavailable<br /><br />
+BUY → T (taken) · SELL/HOLD → N (not taken)
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Indicators</h3>
+            <div class="formula-box formula-box--flush">
+ΔP[i] = P[i] − P[i−1]<br />
+%Δ[i] = (P[i] − P[i−1]) / P[i−1] × 100<br />
+SMA[i] = mean of P[i−W+1 … i]  (null if i &lt; W−1)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-branch-prediction" aria-labelledby="viewBranchPredictionTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewBranchPredictionTitle">1-bit dynamic branch prediction</h2>
+            <p>Last-outcome predictor with an explicit warm-up observation.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">How the algorithm works</h3>
+          <ol class="edu-list">
+            <li>The first actual branch outcome (T or N) warms up the predictor. It is not a hit or miss.</li>
+            <li>Each later outcome is predicted as the previous actual outcome.</li>
+            <li>The prediction is compared with the current actual outcome.</li>
+            <li>Every evaluated step increments exactly one of hit or miss.</li>
+            <li>Accuracy = hits / evaluated predictions. If none are evaluated, accuracy is N/A — never 0% or 100% by default.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-cpi-analytics" aria-labelledby="viewCpiAnalyticsTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewCpiAnalyticsTitle">CPI derivations</h2>
+            <p>Reference CPI uses assumed accuracy. Measured CPI uses simulated mispredictions.</p>
+          </div>
+        </div>
+        <div class="terminal-two-col">
+          <div class="card">
+            <h3 class="card-title">No-prediction baseline</h3>
+            <div class="formula-box formula-box--flush">
+CPI = 1.0 + (0.25 × 1.00 × 3) = 1.750<br />
+Cycles = 1,000 × 1.750 = 1,750
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">90% reference predictor</h3>
+            <div class="formula-box formula-box--flush">
+CPI = 1.0 + (0.25 × 0.10 × 3) = 1.075<br />
+Cycles = 1,000 × 1.075 = 1,075<br />
+Savings = 675 · Reduction = 38.57% · Speedup = 1.628×
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Measured simulation</h3>
+            <div class="formula-box formula-box--flush">
+CPI = 1 + (misses × 3) / 1,000<br />
+Example: 5 misses → CPI = 1.015 → 1,015 cycles<br />
+This is not the 90% reference formula.
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">What is not claimed</h3>
+            <p class="panel-note">Modeled cycles are textbook arithmetic. The millisecond figure is JavaScript wall-clock time in this browser. Neither is physical CPU telemetry or exchange latency.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-portfolio" aria-labelledby="viewPortfolioTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewPortfolioTitle">Signal summary</h2>
+            <p>Counts from the current simulated dataset. No cash, P&amp;L, or brokerage book is modeled.</p>
+          </div>
+        </div>
+        <div class="ticker-strip ticker-strip-3">
+          <div class="ticker-card"><span class="ticker-symbol">PERIODS</span><div class="ticker-price" id="portPeriods">—</div></div>
+          <div class="ticker-card"><span class="ticker-symbol">LAST SIGNAL</span><div class="ticker-price" id="portLast">—</div></div>
+          <div class="ticker-card"><span class="ticker-symbol">BUY / SELL / HOLD</span><div class="ticker-price"><span id="portBuy">0</span> / <span id="portSell">0</span> / <span id="portHold">0</span></div></div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">Signal mix</h3>
+          <table class="standard-table">
+            <thead><tr><th>Signal</th><th>Count</th><th>Share</th></tr></thead>
+            <tbody id="portfolioTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-backtesting" aria-labelledby="viewBacktestingTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewBacktestingTitle">Simulation review</h2>
+            <p>These figures update only after you run the branch simulation. They are not market backtest returns.</p>
+          </div>
+        </div>
+        <div class="ticker-strip">
+          <div class="ticker-card"><span class="ticker-symbol">EVALUATED</span><div class="ticker-price" id="btEvaluated">N/A — awaiting predictions</div></div>
+          <div class="ticker-card"><span class="ticker-symbol">HITS / MISSES</span><div class="ticker-price"><span id="btHits">N/A</span> / <span id="btMisses">N/A</span></div></div>
+          <div class="ticker-card"><span class="ticker-symbol">ACCURACY</span><div class="ticker-price" id="btAccuracy">N/A — awaiting predictions</div></div>
+          <div class="ticker-card"><span class="ticker-symbol">MEASURED CPI</span><div class="ticker-price" id="btCpi">N/A — awaiting predictions</div></div>
+        </div>
+        <div class="action-controls-card">
+          <p class="panel-note">Cycle reduction vs baseline: <strong id="btReduction">N/A — awaiting predictions</strong> · Speedup: <strong id="btSpeedup">N/A — awaiting predictions</strong></p>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-news" aria-labelledby="viewNewsTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewNewsTitle">Lab notes</h2>
+            <p>Course-oriented explanations. There is no live news wire.</p>
+          </div>
+        </div>
+        <div class="news-list">
+          <article class="news-item">
+            <div class="news-meta"><span>ARCHITECTURE</span><span class="news-sentiment neutral">Model</span></div>
+            <h3 class="news-headline">Why branches matter in a pipeline</h3>
+            <p class="news-summary">If a processor stalls until a branch resolves, a 3-cycle penalty can be charged on every branch. Prediction reduces how often that penalty is paid.</p>
+          </article>
+          <article class="news-item">
+            <div class="news-meta"><span>THIS DEMO</span><span class="news-sentiment bullish">Simulation</span></div>
+            <h3 class="news-headline">Signals are a proxy sequence only</h3>
+            <p class="news-summary">BUY/SELL/HOLD are mapped to Taken/Not Taken so students can watch a 1-bit predictor. That mapping is pedagogical, not a claim about real trading CPUs.</p>
+          </article>
+          <article class="news-item">
+            <div class="news-meta"><span>MEASUREMENT</span><span class="news-sentiment neutral">Limitation</span></div>
+            <h3 class="news-headline">Browser milliseconds ≠ clock cycles</h3>
+            <p class="news-summary">performance.now() times JavaScript in this page. The cycle cards are modeled with a 1,000-instruction textbook workload.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="view-pane" id="view-settings" aria-labelledby="viewSettingsTitle">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2 id="viewSettingsTitle">Assumptions and course metadata</h2>
+            <p>Fixed model constants. Changing the UI SMA window does not change these hardware assumptions.</p>
+          </div>
+        </div>
+        <div class="terminal-two-col">
+          <div class="card">
+            <h3 class="card-title">Fixed microarchitecture constants</h3>
+            <table class="standard-table">
+              <thead><tr><th>Parameter</th><th>Value</th><th>Role</th></tr></thead>
+              <tbody>
+                <tr><td>Base CPI</td><td>1.0</td><td>Ideal single-issue rate</td></tr>
+                <tr><td>Branch frequency</td><td>0.25 (25%)</td><td>Used in the reference CPI formula</td></tr>
+                <tr><td>Misprediction penalty</td><td>3 cycles</td><td>Pipeline flush cost</td></tr>
+                <tr><td>Reference accuracy</td><td>90%</td><td>Assumed hardware target, not measured</td></tr>
+                <tr><td>Instruction count N</td><td>1,000</td><td>Denominator for measured CPI and cycles</td></tr>
+                <tr><td>Miss rounding</td><td>Integer counters</td><td>Misses are whole numbers from the simulator</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3 class="card-title">Course</h3>
+            <div class="meta-copy">
+              <p><strong>Course:</strong> Computer Organisation and Architecture (IACSI203)</p>
+              <p><strong>Project:</strong> Real-Time Trading System — Branch Prediction, CPI Analysis and Low-Latency Decision Making</p>
+              <p><strong>Stack:</strong> HTML, CSS, JavaScript, local Chart.js</p>
+              <p><strong>Offline:</strong> Open index.html or serve the folder. Charts use chart.umd.min.js in this directory.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="terminal-footer">
+      <div>IACSI203 · Computer Organisation and Architecture · educational case study</div>
+      <div>Synthetic simulation · not financial advice · intended to run offline</div>
+    </footer>
+  </div>
+</div>
+
+<script src="chart.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
